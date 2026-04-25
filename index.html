@@ -1,448 +1,439 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lababil Solution - Sistem Penjualan</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; }
-:root {
-  --navy: #0C3547; --blue: #185FA5; --blue-light: #E6F1FB;
-  --accent: #1D9E75; --accent-light: #E1F5EE;
-  --amber-light: #FAEEDA; --red-light: #FCEBEB;
-  --border: #e0e0e0; --bg: #fff; --bg2: #f4f5f7;
-  --text: #1a1a2e; --text2: #6b7280;
-}
-.app { min-height: 100vh; }
-.topbar { background: var(--navy); color: white; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
-.logo { display: flex; align-items: center; gap: 10px; }
-.logo-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: white; }
-.logo-text { font-size: 15px; font-weight: 600; }
-.logo-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
-.user-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 4px 12px 4px 4px; }
-.avatar { width: 26px; height: 26px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: white; }
-.user-name { font-size: 12px; color: rgba(255,255,255,0.9); }
-.nav { background: white; border-bottom: 1px solid var(--border); display: flex; padding: 0 20px; overflow-x: auto; }
-.nav-item { padding: 12px 16px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; }
-.nav-item:hover { color: var(--text); }
-.nav-item.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
-.content { padding: 20px; }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.stat-card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 14px 16px; }
-.stat-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-value { font-size: 20px; font-weight: 600; color: var(--text); }
-.stat-sub { font-size: 11px; color: var(--accent); margin-top: 4px; }
-.stat-sub.neg { color: #A32D2D; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
-.card { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 16px; }
-.card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
-.btn-sm { font-size: 12px; padding: 5px 12px; background: var(--blue-light); color: var(--blue); border: 1px solid #B5D4F4; border-radius: 6px; cursor: pointer; }
-.btn-primary { background: var(--navy); color: white; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; cursor: pointer; font-weight: 500; }
-.btn-primary:hover { background: var(--blue); }
-.btn-success { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; cursor: pointer; }
-.btn-danger { background: #E24B4A; color: white; border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
-.order-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-.order-item:last-child { border-bottom: none; }
-.order-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-.order-info { flex: 1; min-width: 0; }
-.order-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.order-meta { font-size: 11px; color: var(--text2); }
-.order-amount { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
-.status-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
-.s-done { background: var(--accent-light); color: #085041; }
-.s-process { background: var(--amber-light); color: #633806; }
-.s-pending { background: var(--blue-light); color: #0C447C; }
-.s-cancel { background: var(--red-light); color: #501313; }
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-.prod-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 14px; cursor: pointer; transition: border-color 0.15s; }
-.prod-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.prod-icon-wrap { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; }
-.prod-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-.prod-cat { font-size: 11px; color: var(--text2); margin-bottom: 8px; }
-.prod-price { font-size: 14px; font-weight: 600; color: var(--blue); }
-.prod-stock { font-size: 11px; color: var(--text2); }
-.stock-low { color: #A32D2D; }
-.form-group { margin-bottom: 14px; }
-.form-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; display: block; }
-.form-input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: white; color: var(--text); }
-.form-input:focus { outline: none; border-color: var(--blue); }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
-.invoice-preview { border: 1px solid var(--border); border-radius: 8px; padding: 14px; background: var(--bg2); }
-.invoice-head { display: flex; justify-content: space-between; margin-bottom: 12px; }
-.invoice-table { width: 100%; font-size: 12px; border-collapse: collapse; }
-.invoice-table th { background: var(--navy); color: white; padding: 6px 8px; text-align: left; font-weight: 600; }
-.invoice-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
-.invoice-table tr:last-child td { border-bottom: none; }
-.invoice-total { display: flex; justify-content: flex-end; margin-top: 10px; gap: 20px; font-size: 13px; }
-.cat-filter { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.cat-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); font-size: 12px; cursor: pointer; background: white; color: var(--text2); }
-.cat-btn:hover, .cat-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.chart-bar-wrap { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin: 8px 0; }
-.bar { flex: 1; background: var(--blue-light); border-radius: 4px 4px 0 0; min-width: 20px; }
-.bar-label { font-size: 9px; color: var(--text2); text-align: center; margin-top: 4px; }
-.customer-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.customer-row:last-child { border-bottom: none; }
-.cust-ava { width: 36px; height: 36px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--blue); flex-shrink: 0; }
-.cust-info { flex: 1; }
-.cust-name { font-size: 13px; font-weight: 600; color: var(--text); }
-.cust-detail { font-size: 11px; color: var(--text2); }
-.cust-total { font-size: 13px; font-weight: 600; color: var(--accent); }
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
-.modal-bg.open { display: flex; }
-.modal { background: white; border-radius: 12px; padding: 20px; width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
-.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; }
-.close-btn { cursor: pointer; color: var(--text2); font-size: 20px; background: none; border: none; }
-.cart-items { margin: 12px 0; }
-.cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.cart-item:last-child { border-bottom: none; }
-.cart-qty { display: flex; align-items: center; gap: 6px; }
-.qty-btn { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
-.empty-state { text-align: center; padding: 40px 20px; color: var(--text2); }
-.empty-icon { font-size: 40px; margin-bottom: 12px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lababil Solution - Sistem Penjualan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .modal { display: none; }
+    .modal.active { display: flex; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .nav-link.active { background-color: #334155; border-left: 4px solid #3b82f6; }
+  </style>
 </head>
-<body>
-<div class="app">
-<div class="topbar">
-  <div class="logo">
-    <div class="logo-icon">LS</div>
-    <div>
-      <div class="logo-text">Lababil Solution</div>
-      <div class="logo-sub">CCTV · Listrik · Network · Jasa</div>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+<div class="flex h-screen overflow-hidden">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-slate-800 text-white flex flex-col shadow-lg">
+    <div class="p-5 text-xl font-bold border-b border-slate-700 flex items-center gap-3">
+      <span class="bg-blue-500 p-1 rounded text-sm">LS</span> Lababil Solution
     </div>
-  </div>
-  <div class="user-chip">
-    <div class="avatar">AD</div>
-    <div class="user-name">Admin</div>
-  </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <a href="#" class="nav-link active block py-3 px-4 rounded-lg hover:bg-slate-700 transition" data-page="dashboard">
+        <i class="fas fa-home w-6"></i> Dashboard
+      </a>
+      <a href="#" class="nav-link block py-3 px-4 rounded-lg hover:bg-slate-700 transition" data-page="produk">
+        <i class="fas fa-box w-6"></i> Produk
+      </a>
+      <a href="#" class="nav-link block py-3 px-4 rounded-lg hover:bg-slate-700 transition" data-page="pelanggan">
+        <i class="fas fa-users w-6"></i> Pelanggan
+      </a>
+      <a href="#" class="nav-link block py-3 px-4 rounded-lg hover:bg-slate-700 transition" data-page="transaksi">
+        <i class="fas fa-cart-shopping w-6"></i> Transaksi
+      </a>
+      <a href="#" class="nav-link block py-3 px-4 rounded-lg hover:bg-slate-700 transition" data-page="invoice">
+        <i class="fas fa-file-invoice w-6"></i> Invoice
+      </a>
+    </nav>
+    <div class="p-4 border-t border-slate-700 text-sm text-slate-400">v1.0.0 | Lababil Solusi</div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    
+    <!-- DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+      <h2 class="text-2xl font-bold mb-6">Dashboard</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p class="text-gray-500 text-sm">Penjualan Hari Ini</p>
+          <p class="text-2xl font-bold mt-1" id="stat-today-rp">Rp 0</p>
+          <p class="text-sm text-blue-500 mt-1"><span id="stat-today-count">0</span> transaksi</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p class="text-gray-500 text-sm">Penjualan Bulan Ini</p>
+          <p class="text-2xl font-bold mt-1" id="stat-month-rp">Rp 0</p>
+          <p class="text-sm text-gray-400 mt-1">Total bulan ini</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p class="text-gray-500 text-sm">Total Pelanggan</p>
+          <p class="text-2xl font-bold mt-1" id="stat-customers">0</p>
+          <p class="text-sm text-gray-400 mt-1">Pelanggan aktif</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <p class="text-gray-500 text-sm">Stok Menipis</p>
+          <p class="text-2xl font-bold mt-1 text-red-500" id="stat-lowstock">0</p>
+          <p class="text-sm text-gray-400 mt-1">Perlu restock</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h3 class="font-semibold mb-4">Transaksi Terbaru</h3>
+          <ul id="recent-transactions" class="space-y-3 text-sm"></ul>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h3 class="font-semibold mb-4">Produk Terlaris</h3>
+          <ul id="top-products" class="space-y-3 text-sm"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUK -->
+    <section id="page-produk" class="page">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Daftar Produk</h2>
+        <button onclick="openModal('modal-produk')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          <i class="fas fa-plus mr-2"></i> Tambah Produk
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 border-b">
+            <tr><th class="p-4">Nama</th><th class="p-4">Kategori</th><th class="p-4">Harga</th><th class="p-4">Stok</th><th class="p-4">Aksi</th></tr>
+          </thead>
+          <tbody id="table-produk" class="divide-y"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PELANGGAN -->
+    <section id="page-pelanggan" class="page">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Daftar Pelanggan</h2>
+        <button onclick="openModal('modal-pelanggan')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+          <i class="fas fa-plus mr-2"></i> Tambah Pelanggan
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 border-b">
+            <tr><th class="p-4">Nama</th><th class="p-4">Telepon</th><th class="p-4">Tipe</th><th class="p-4">Alamat</th></tr>
+          </thead>
+          <tbody id="table-pelanggan" class="divide-y"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TRANSAKSI -->
+    <section id="page-transaksi" class="page">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Transaksi</h2>
+        <button onclick="openModal('modal-transaksi')" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+          <i class="fas fa-plus mr-2"></i> Transaksi Baru
+        </button>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-gray-500">Riwayat transaksi akan muncul di sini setelah Anda membuat transaksi pertama.</p>
+        <ul id="list-transaksi" class="mt-4 space-y-3"></ul>
+      </div>
+    </section>
+
+    <!-- INVOICE -->
+    <section id="page-invoice" class="page">
+      <h2 class="text-2xl font-bold mb-6">Daftar Invoice</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 border-b">
+            <tr><th class="p-4">No Invoice</th><th class="p-4">Pelanggan</th><th class="p-4">Tanggal</th><th class="p-4">Total</th><th class="p-4">Status</th></tr>
+          </thead>
+          <tbody id="table-invoice" class="divide-y"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
 </div>
 
-<div class="nav">
-  <div class="nav-item active" onclick="showTab('dashboard')" id="nav-dashboard">Dashboard</div>
-  <div class="nav-item" onclick="showTab('produk')" id="nav-produk">Produk</div>
-  <div class="nav-item" onclick="showTab('transaksi')" id="nav-transaksi">Transaksi</div>
-  <div class="nav-item" onclick="showTab('pelanggan')" id="nav-pelanggan">Pelanggan</div>
-  <div class="nav-item" onclick="showTab('invoice')" id="nav-invoice">Invoice</div>
-</div>
-
-<div class="content">
-<!-- DASHBOARD -->
-<div class="tab-content active" id="tab-dashboard">
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Penjualan Hari Ini</div><div class="stat-value" id="stat-today">Rp 0</div><div class="stat-sub" id="stat-today-sub">0 transaksi</div></div>
-    <div class="stat-card"><div class="stat-label">Penjualan Bulan Ini</div><div class="stat-value" id="stat-month">Rp 0</div><div class="stat-sub">Total bulan ini</div></div>
-    <div class="stat-card"><div class="stat-label">Total Pelanggan</div><div class="stat-value" id="stat-cust">0</div><div class="stat-sub">Pelanggan aktif</div></div>
-    <div class="stat-card"><div class="stat-label">Stok Menipis</div><div class="stat-value" id="stat-stock">0</div><div class="stat-sub neg">Perlu restock</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">Penjualan 7 Hari Terakhir</div><div id="chart-bars" class="chart-bar-wrap"></div><div id="chart-labels" style="display:flex;gap:6px;"></div></div>
-    <div class="card"><div class="card-title">Transaksi Terbaru <button class="btn-sm" onclick="showTab('transaksi')">Semua</button></div><div id="recent-orders"></div></div>
-  </div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">Produk Terlaris</div><div id="top-products"></div></div>
-    <div class="card"><div class="card-title">Pelanggan Teratas <button class="btn-sm" onclick="showTab('pelanggan')">Semua</button></div><div id="top-customers"></div></div>
-  </div>
-</div>
-<!-- PRODUK -->
-<div class="tab-content" id="tab-produk">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-    <input class="form-input" style="max-width:240px;" placeholder="Cari produk..." oninput="filterProducts(this.value)" />
-    <button class="btn-primary" onclick="openAddProduct()">+ Tambah Produk</button>
-  </div>
-  <div class="cat-filter" id="cat-filter"></div>
-  <div class="product-grid" id="product-grid"></div>
-</div>
-<!-- TRANSAKSI -->
-<div class="tab-content" id="tab-transaksi">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-    <input class="form-input" style="max-width:240px;" placeholder="Cari transaksi..." oninput="filterOrders(this.value)" />
-    <button class="btn-primary" onclick="openNewOrder()">+ Transaksi Baru</button>
-  </div>
-  <div class="card" style="padding:0;overflow:hidden;"><div id="order-list" style="padding:0 16px;"></div></div>
-</div>
-<!-- PELANGGAN -->
-<div class="tab-content" id="tab-pelanggan">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-    <input class="form-input" style="max-width:240px;" placeholder="Cari pelanggan..." oninput="filterCustomers(this.value)" />
-    <button class="btn-primary" onclick="openAddCustomer()">+ Tambah Pelanggan</button>
-  </div>
-  <div class="card" style="padding:0;overflow:hidden;"><div id="customer-list" style="padding:0 16px;"></div></div>
-</div>
-<!-- INVOICE -->
-<div class="tab-content" id="tab-invoice">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-    <div style="font-size:14px;color:var(--text2);">Daftar invoice yang telah dibuat</div>
-    <button class="btn-primary" onclick="openNewOrder()">+ Buat Invoice</button>
-  </div>
-  <div class="card" style="padding:0;overflow:hidden;"><div id="invoice-list" style="padding:0 16px;"></div></div>
-</div>
-</div>
-</div>
-
-<!-- MODAL TAMBAH PRODUK -->
-<div class="modal-bg" id="modal-add-product">
-<div class="modal">
-  <div class="modal-title">Tambah Produk <button class="close-btn" onclick="closeModal('modal-add-product')">×</button></div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Nama Produk</label><input class="form-input" id="np-name" placeholder="Nama produk" /></div>
-    <div class="form-group"><label class="form-label">Kategori</label><select class="form-input" id="np-cat"><option value="CCTV">CCTV</option><option value="Listrik">Listrik</option><option value="Network">Network</option><option value="Jasa">Jasa Pemasangan</option></select></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Harga Jual (Rp)</label><input class="form-input" id="np-price" type="number" placeholder="0" /></div>
-    <div class="form-group"><label class="form-label">Stok</label><input class="form-input" id="np-stock" type="number" placeholder="0" /></div>
-  </div>
-  <div class="form-group"><label class="form-label">Deskripsi</label><input class="form-input" id="np-desc" placeholder="Deskripsi singkat" /></div>
-  <button class="btn-primary" onclick="saveProduct()" style="width:100%;margin-top:6px;">Simpan Produk</button>
-</div>
-</div>
-
-<!-- MODAL TAMBAH PELANGGAN -->
-<div class="modal-bg" id="modal-add-customer">
-<div class="modal">
-  <div class="modal-title">Tambah Pelanggan <button class="close-btn" onclick="closeModal('modal-add-customer')">×</button></div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Nama</label><input class="form-input" id="nc-name" placeholder="Nama lengkap" /></div>
-    <div class="form-group"><label class="form-label">No. Telepon</label><input class="form-input" id="nc-phone" placeholder="08xx..." /></div>
-  </div>
-  <div class="form-group"><label class="form-label">Alamat</label><input class="form-input" id="nc-addr" placeholder="Alamat lengkap" /></div>
-  <div class="form-group"><label class="form-label">Tipe</label><select class="form-input" id="nc-type"><option value="Retail">Retail</option><option value="Korporat">Korporat</option><option value="Proyek">Proyek</option></select></div>
-  <button class="btn-primary" onclick="saveCustomer()" style="width:100%;margin-top:6px;">Simpan Pelanggan</button>
-</div>
-</div>
-
-<!-- MODAL TRANSAKSI BARU -->
-<div class="modal-bg" id="modal-new-order">
-<div class="modal">
-  <div class="modal-title">Transaksi Baru <button class="close-btn" onclick="closeModal('modal-new-order')">×</button></div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Pelanggan</label><select class="form-input" id="no-customer"></select></div>
-    <div class="form-group"><label class="form-label">Status</label><select class="form-input" id="no-status"><option value="Selesai">Selesai</option><option value="Proses">Sedang Diproses</option><option value="Pending">Pending</option></select></div>
-  </div>
-  <div class="form-group">
-    <label class="form-label">Tambah Produk</label>
-    <div style="display:flex;gap:8px;">
-      <select class="form-input" id="no-product" style="flex:1;"></select>
-      <input type="number" class="form-input" id="no-qty" placeholder="Qty" style="width:70px;" min="1" value="1" />
-      <button class="btn-sm" onclick="addToCart()">+ Tambah</button>
+<!-- MODAL PRODUK -->
+<div id="modal-produk" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Tambah Produk</h3>
+      <button onclick="closeModal('modal-produk')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
     </div>
+    <form id="form-produk" class="space-y-4">
+      <input type="text" id="prod-nama" placeholder="Nama Produk" required class="w-full p-2 border rounded">
+      <select id="prod-kategori" class="w-full p-2 border rounded">
+        <option>CCTV</option><option>Listrik</option><option>Network</option><option>Jasa Pemasangan</option>
+      </select>
+      <input type="number" id="prod-harga" placeholder="Harga Jual (Rp)" required class="w-full p-2 border rounded">
+      <input type="number" id="prod-stok" placeholder="Stok" required class="w-full p-2 border rounded">
+      <textarea id="prod-desc" placeholder="Deskripsi" class="w-full p-2 border rounded"></textarea>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Simpan Produk</button>
+    </form>
   </div>
-  <div class="cart-items" id="cart-items"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);">
-    <div style="font-size:14px;font-weight:600;">Total: <span id="cart-total" style="color:var(--blue);">Rp 0</span></div>
-    <button class="btn-success" onclick="saveOrder()">Simpan Transaksi</button>
-  </div>
-</div>
 </div>
 
-<script>
-let products = [
-  {id:1,name:'IP Camera 2MP Hikvision',cat:'CCTV',price:450000,stock:15,desc:'Kamera CCTV IP 2MP indoor/outdoor'},
-  {id:2,name:'DVR 4 Channel Dahua',cat:'CCTV',price:850000,stock:8,desc:'Digital Video Recorder 4CH'},
-  {id:3,name:'IP Camera 4MP PoE',cat:'CCTV',price:650000,stock:12,desc:'Kamera IP 4MP dengan PoE'},
-  {id:4,name:'NVR 8 Channel',cat:'CCTV',price:1200000,stock:5,desc:'Network Video Recorder 8CH'},
-  {id:5,name:'Kabel NYM 2x1.5mm',cat:'Listrik',price:85000,stock:50,desc:'Kabel listrik per roll 50m'},
-  {id:6,name:'MCB 2A Schneider',cat:'Listrik',price:45000,stock:30,desc:'Miniature Circuit Breaker 2A'},
-  {id:7,name:'Stop Kontak Tanam',cat:'Listrik',price:35000,stock:40,desc:'Stop kontak tanam 2 lubang'},
-  {id:8,name:'Kabel UTP Cat6 AMP',cat:'Network',price:120000,stock:25,desc:'Kabel LAN Cat6 per rol 305m'},
-  {id:9,name:'Switch 8 Port TP-Link',cat:'Network',price:220000,stock:10,desc:'Unmanaged switch 8 port'},
-  {id:10,name:'Router WiFi Mikrotik',cat:'Network',price:580000,stock:6,desc:'Router RB941 hAP lite'},
-  {id:11,name:'Patch Panel 24 Port',cat:'Network',price:380000,stock:4,desc:'Patch panel Cat6 24 port'},
-  {id:12,name:'Jasa Pasang CCTV',cat:'Jasa',price:250000,stock:999,desc:'Jasa pemasangan per titik CCTV'},
-  {id:13,name:'Jasa Instalasi Jaringan',cat:'Jasa',price:150000,stock:999,desc:'Jasa crimping & instalasi LAN per titik'},
-  {id:14,name:'Jasa Instalasi Listrik',cat:'Jasa',price:200000,stock:999,desc:'Jasa instalasi titik listrik'},
-];
-let customers = [
-  {id:1,name:'PT. Maju Bersama',phone:'08123456789',addr:'Jl. Sudirman No.12, Jambi',type:'Korporat'},
-  {id:2,name:'Toko Sari Elektronik',phone:'08234567890',addr:'Jl. Gatot Subroto, Jambi',type:'Retail'},
-  {id:3,name:'CV Bangun Karya',phone:'08345678901',addr:'Jl. A. Yani No.5, Jambi',type:'Proyek'},
-  {id:4,name:'Bpk. Hendra Kusuma',phone:'08456789012',addr:'Perumahan Mawar No.7, Jambi',type:'Retail'},
-];
-let orders = [
-  {id:'INV-001',custId:1,items:[{pid:1,qty:4,price:450000},{pid:12,qty:4,price:250000}],status:'Selesai',date:'2025-04-24',total:2800000},
-  {id:'INV-002',custId:3,items:[{pid:8,qty:2,price:120000},{pid:9,qty:1,price:220000},{pid:13,qty:10,price:150000}],status:'Proses',date:'2025-04-25',total:1960000},
-  {id:'INV-003',custId:2,items:[{pid:5,qty:3,price:85000},{pid:6,qty:5,price:45000},{pid:14,qty:5,price:200000}],status:'Selesai',date:'2025-04-23',total:1480000},
-  {id:'INV-004',custId:4,items:[{pid:10,qty:1,price:580000},{pid:12,qty:2,price:250000}],status:'Pending',date:'2025-04-25',total:1080000},
-];
-let cart=[], prodIdSeq=15, custIdSeq=5, orderIdSeq=5, activeCat='Semua';
-const catIcons={CCTV:'📷',Listrik:'⚡',Network:'🌐',Jasa:'🔧'};
-const catColors={CCTV:'background:#E6F1FB;color:#0C447C',Listrik:'background:#FAEEDA;color:#633806',Network:'background:#E1F5EE;color:#085041',Jasa:'background:#FBEAF0;color:#72243E'};
-const statusStyle={Selesai:'s-done',Proses:'s-process',Pending:'s-pending',Batal:'s-cancel'};
-function fmt(n){return'Rp '+Number(n).toLocaleString('id-ID');}
-function getProduct(id){return products.find(p=>p.id==id);}
-function getCustomer(id){return customers.find(c=>c.id==id);}
-function showTab(t){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  document.getElementById('nav-'+t).classList.add('active');
-  if(t==='dashboard')renderDashboard();
-  if(t==='produk')renderProducts();
-  if(t==='transaksi')renderOrders();
-  if(t==='pelanggan')renderCustomers();
-  if(t==='invoice')renderInvoices();
-}
-function renderDashboard(){
-  const today='2025-04-25';
-  const todayOrders=orders.filter(o=>o.date===today);
-  const todayTotal=todayOrders.reduce((s,o)=>s+o.total,0);
-  const monthTotal=orders.reduce((s,o)=>s+o.total,0);
-  const lowStock=products.filter(p=>p.stock<7&&p.cat!=='Jasa').length;
-  document.getElementById('stat-today').textContent=fmt(todayTotal);
-  document.getElementById('stat-today-sub').textContent=todayOrders.length+' transaksi';
-  document.getElementById('stat-month').textContent=fmt(monthTotal);
-  document.getElementById('stat-cust').textContent=customers.length;
-  document.getElementById('stat-stock').textContent=lowStock;
-  const days=['19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
-  const vals=[1200000,800000,2100000,1500000,1480000,2800000,2040000];
-  const maxV=Math.max(...vals);
-  let bars='',labels='';
-  vals.forEach((v,i)=>{
-    const h=Math.round((v/maxV)*76);
-    bars+=`<div class="bar" style="height:${h}px;" title="${days[i]}: ${fmt(v)}"></div>`;
-    labels+=`<div class="bar-label" style="flex:1;">${days[i].split(' ')[0]}</div>`;
+<!-- MODAL PELANGGAN -->
+<div id="modal-pelanggan" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Tambah Pelanggan</h3>
+      <button onclick="closeModal('modal-pelanggan')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="form-pelanggan" class="space-y-4">
+      <input type="text" id="cust-nama" placeholder="Nama" required class="w-full p-2 border rounded">
+      <input type="text" id="cust-telp" placeholder="No. Telepon" class="w-full p-2 border rounded">
+      <input type="text" id="cust-alamat" placeholder="Alamat" class="w-full p-2 border rounded">
+      <select id="cust-tipe" class="w-full p-2 border rounded">
+        <option>Retail</option><option>Korporat</option><option>Proyek</option>
+      </select>
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Simpan Pelanggan</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL TRANSAKSI -->
+<div id="modal-transaksi" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50">
+  <div class="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Transaksi Baru</h3>
+      <button onclick="closeModal('modal-transaksi')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="form-transaksi" class="space-y-4">
+      <select id="trans-pelanggan" class="w-full p-2 border rounded"></select>
+      <select id="trans-status" class="w-full p-2 border rounded">
+        <option value="Selesai">Selesai</option>
+        <option value="Sedang Diproses">Sedang Diproses</option>
+        <option value="Pending">Pending</option>
+      </select>
+      
+      <div class="border rounded p-3 bg-gray-50 space-y-2">
+        <div class="flex gap-2">
+          <select id="trans-item-prod" class="flex-1 p-2 border rounded"></select>
+          <input type="number" id="trans-item-qty" placeholder="Qty" min="1" class="w-20 p-2 border rounded">
+          <button type="button" id="btn-add-item" class="bg-gray-200 px-3 rounded hover:bg-gray-300">+</button>
+        </div>
+        <ul id="trans-items-list" class="space-y-1 text-sm"></ul>
+      </div>
+      
+      <div class="flex justify-between font-bold text-lg border-t pt-3">
+        <span>Total:</span>
+        <span id="trans-total">Rp 0</span>
+      </div>
+      <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">Simpan Transaksi</button>
+    </form>
+  </div>
+</div>
+
+<!-- FIREBASE & APP LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // 🔑 GANTI DENGAN CONFIG ANDA DARI FIREBASE CONSOLE
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // State
+  let cartItems = [];
+  let produkList = [];
+  let pelangganList = [];
+
+  // Navigation
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      link.classList.add('active');
+      document.getElementById(`page-${link.dataset.page}`).classList.add('active');
+    });
   });
-  document.getElementById('chart-bars').innerHTML=bars;
-  document.getElementById('chart-labels').innerHTML=labels;
-  const ro=[...orders].reverse().slice(0,4);
-  document.getElementById('recent-orders').innerHTML=ro.map(o=>{
-    const c=getCustomer(o.custId);
-    const cats=[...new Set(o.items.map(i=>getProduct(i.pid)?.cat||''))].filter(Boolean);
-    return`<div class="order-item"><div class="order-icon" style="${catColors[cats[0]]||''}">${catIcons[cats[0]]||'📦'}</div><div class="order-info"><div class="order-name">${o.id} - ${c?c.name:'?'}</div><div class="order-meta">${o.date} · <span class="status-badge ${statusStyle[o.status]||'s-pending'}">${o.status}</span></div></div><div class="order-amount">${fmt(o.total)}</div></div>`;
-  }).join('');
-  const pSales={};
-  orders.forEach(o=>o.items.forEach(i=>{pSales[i.pid]=(pSales[i.pid]||0)+i.qty*i.price;}));
-  const topP=Object.entries(pSales).sort((a,b)=>b[1]-a[1]).slice(0,4);
-  document.getElementById('top-products').innerHTML=topP.map(([pid,total])=>{
-    const p=getProduct(pid);if(!p)return'';
-    return`<div class="order-item"><div class="order-icon" style="${catColors[p.cat]||''}">${catIcons[p.cat]||'📦'}</div><div class="order-info"><div class="order-name">${p.name}</div><div class="order-meta">${p.cat}</div></div><div class="order-amount">${fmt(total)}</div></div>`;
-  }).join('');
-  const cSales={};
-  orders.forEach(o=>{cSales[o.custId]=(cSales[o.custId]||0)+o.total;});
-  const topC=Object.entries(cSales).sort((a,b)=>b[1]-a[1]).slice(0,4);
-  document.getElementById('top-customers').innerHTML=topC.map(([cid,total])=>{
-    const c=getCustomer(Number(cid));if(!c)return'';
-    const initials=c.name.split(' ').slice(0,2).map(w=>w[0]).join('');
-    return`<div class="customer-row"><div class="cust-ava">${initials}</div><div class="cust-info"><div class="cust-name">${c.name}</div><div class="cust-detail">${c.type}</div></div><div class="cust-total">${fmt(total)}</div></div>`;
-  }).join('');
-}
-function renderProducts(filter='',cat=activeCat){
-  const cats=['Semua','CCTV','Listrik','Network','Jasa'];
-  document.getElementById('cat-filter').innerHTML=cats.map(c=>`<button class="cat-btn${c===cat?' active':''}" onclick="setActiveCat('${c}')">${c}</button>`).join('');
-  let filtered=products.filter(p=>(cat==='Semua'||p.cat===cat)&&(p.name.toLowerCase().includes(filter.toLowerCase())||p.cat.toLowerCase().includes(filter.toLowerCase())));
-  document.getElementById('product-grid').innerHTML=filtered.length?filtered.map(p=>`<div class="prod-card" onclick="editProduct(${p.id})"><div class="prod-icon-wrap" style="${catColors[p.cat]||''}">${catIcons[p.cat]||'📦'}</div><div class="prod-name">${p.name}</div><div class="prod-cat">${p.cat}</div><div class="prod-price">${fmt(p.price)}</div><div class="prod-stock ${p.stock<7&&p.cat!=='Jasa'?'stock-low':''}">${p.cat==='Jasa'?'Jasa':'Stok: '+p.stock}</div></div>`).join(''):'<div class="empty-state"><div class="empty-icon">📦</div><div>Tidak ada produk ditemukan</div></div>';
-}
-function setActiveCat(cat){activeCat=cat;renderProducts('',cat);}
-function filterProducts(v){renderProducts(v,activeCat);}
-function renderOrders(filter=''){
-  let filtered=orders.filter(o=>{const c=getCustomer(o.custId);return o.id.toLowerCase().includes(filter.toLowerCase())||(c&&c.name.toLowerCase().includes(filter.toLowerCase()));}).reverse();
-  document.getElementById('order-list').innerHTML=filtered.length?filtered.map(o=>{
-    const c=getCustomer(o.custId);
-    const cats=[...new Set(o.items.map(i=>getProduct(i.pid)?.cat||''))].filter(Boolean);
-    return`<div class="order-item"><div class="order-icon" style="${catColors[cats[0]]||''}">${catIcons[cats[0]]||'📦'}</div><div class="order-info"><div class="order-name">${o.id} — ${c?c.name:'?'}</div><div class="order-meta">${o.date} · ${o.items.length} item · <span class="status-badge ${statusStyle[o.status]||'s-pending'}">${o.status}</span></div></div><div style="text-align:right;"><div class="order-amount">${fmt(o.total)}</div><button class="btn-sm" onclick="viewInvoice('${o.id}')" style="margin-top:4px;">Invoice</button></div></div>`;
-  }).join(''):'<div class="empty-state"><div class="empty-icon">🧾</div><div>Belum ada transaksi</div></div>';
-}
-function filterOrders(v){renderOrders(v);}
-function renderCustomers(filter=''){
-  let filtered=customers.filter(c=>c.name.toLowerCase().includes(filter.toLowerCase())||c.phone.includes(filter));
-  document.getElementById('customer-list').innerHTML=filtered.length?filtered.map(c=>{
-    const initials=c.name.split(' ').slice(0,2).map(w=>w[0]).join('');
-    const total=orders.filter(o=>o.custId===c.id).reduce((s,o)=>s+o.total,0);
-    return`<div class="customer-row"><div class="cust-ava">${initials}</div><div class="cust-info"><div class="cust-name">${c.name}</div><div class="cust-detail">${c.phone} · ${c.addr} · <span class="status-badge s-pending">${c.type}</span></div></div><div style="text-align:right;"><div class="cust-total">${fmt(total)}</div><div style="font-size:11px;color:var(--text2);">${orders.filter(o=>o.custId===c.id).length} transaksi</div></div></div>`;
-  }).join(''):'<div class="empty-state"><div class="empty-icon">👤</div><div>Pelanggan tidak ditemukan</div></div>';
-}
-function filterCustomers(v){renderCustomers(v);}
-function renderInvoices(){
-  document.getElementById('invoice-list').innerHTML=[...orders].reverse().map(o=>{
-    const c=getCustomer(o.custId);
-    return`<div class="order-item"><div class="order-info"><div class="order-name" style="font-size:14px;">${o.id}</div><div class="order-meta">${o.date} · ${c?c.name:'?'} · <span class="status-badge ${statusStyle[o.status]||'s-pending'}">${o.status}</span></div></div><div style="text-align:right;display:flex;align-items:center;gap:10px;"><div class="order-amount">${fmt(o.total)}</div><button class="btn-sm" onclick="viewInvoice('${o.id}')">Lihat</button></div></div>`;
-  }).join('');
-}
-function openAddProduct(){
-  ['np-name','np-price','np-stock','np-desc'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('modal-add-product').classList.add('open');
-}
-function saveProduct(){
-  const name=document.getElementById('np-name').value.trim();
-  const price=parseInt(document.getElementById('np-price').value)||0;
-  const stock=parseInt(document.getElementById('np-stock').value)||0;
-  const cat=document.getElementById('np-cat').value;
-  const desc=document.getElementById('np-desc').value.trim();
-  if(!name||!price){alert('Nama & harga harus diisi');return;}
-  products.push({id:prodIdSeq++,name,cat,price,stock,desc});
-  closeModal('modal-add-product');renderProducts();
-}
-function editProduct(id){
-  const p=getProduct(id);if(!p)return;
-  document.getElementById('np-name').value=p.name;
-  document.getElementById('np-price').value=p.price;
-  document.getElementById('np-stock').value=p.stock;
-  document.getElementById('np-desc').value=p.desc;
-  document.getElementById('np-cat').value=p.cat;
-  document.getElementById('modal-add-product').classList.add('open');
-}
-function openAddCustomer(){
-  ['nc-name','nc-phone','nc-addr'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('modal-add-customer').classList.add('open');
-}
-function saveCustomer(){
-  const name=document.getElementById('nc-name').value.trim();
-  const phone=document.getElementById('nc-phone').value.trim();
-  const addr=document.getElementById('nc-addr').value.trim();
-  const type=document.getElementById('nc-type').value;
-  if(!name){alert('Nama harus diisi');return;}
-  customers.push({id:custIdSeq++,name,phone,addr,type});
-  closeModal('modal-add-customer');renderCustomers();
-}
-function openNewOrder(){
-  cart=[];
-  document.getElementById('no-customer').innerHTML=customers.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  document.getElementById('no-product').innerHTML=products.map(p=>`<option value="${p.id}">${p.name} (${fmt(p.price)})</option>`).join('');
-  renderCart();document.getElementById('modal-new-order').classList.add('open');
-}
-function addToCart(){
-  const pid=parseInt(document.getElementById('no-product').value);
-  const qty=parseInt(document.getElementById('no-qty').value)||1;
-  const p=getProduct(pid);if(!p)return;
-  const existing=cart.find(i=>i.pid===pid);
-  if(existing){existing.qty+=qty;}else{cart.push({pid,qty,price:p.price});}
-  renderCart();
-}
-function renderCart(){
-  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('cart-items').innerHTML=cart.length?cart.map((item,idx)=>{
-    const p=getProduct(item.pid);
-    return`<div class="cart-item"><div style="flex:1;"><div style="font-size:13px;font-weight:600;">${p?p.name:'?'}</div><div style="font-size:11px;color:var(--text2);">${fmt(item.price)}/unit</div></div><div class="cart-qty"><button class="qty-btn" onclick="changeQty(${idx},-1)">−</button><span style="font-size:13px;min-width:24px;text-align:center;">${item.qty}</span><button class="qty-btn" onclick="changeQty(${idx},1)">+</button><button class="btn-danger" onclick="removeCart(${idx})">×</button></div><div style="font-size:13px;font-weight:600;margin-left:12px;min-width:80px;text-align:right;">${fmt(item.price*item.qty)}</div></div>`;
-  }).join(''):'<div style="text-align:center;padding:20px;color:var(--text2);font-size:13px;">Belum ada produk ditambahkan</div>';
-  document.getElementById('cart-total').textContent=fmt(total);
-}
-function changeQty(idx,delta){cart[idx].qty=Math.max(1,cart[idx].qty+delta);renderCart();}
-function removeCart(idx){cart.splice(idx,1);renderCart();}
-function saveOrder(){
-  if(!cart.length){alert('Tambahkan produk terlebih dahulu');return;}
-  const custId=parseInt(document.getElementById('no-customer').value);
-  const status=document.getElementById('no-status').value;
-  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const id='INV-'+String(orderIdSeq++).padStart(3,'0');
-  orders.push({id,custId,items:[...cart],status,date:new Date().toISOString().slice(0,10),total});
-  closeModal('modal-new-order');renderOrders();showTab('transaksi');
-}
-function viewInvoice(id){
-  const o=orders.find(x=>x.id===id);if(!o)return;
-  const c=getCustomer(o.custId);
-  const rows=o.items.map(i=>{const p=getProduct(i.pid);return`<tr><td>${p?p.name:i.pid}</td><td style="text-align:center;">${i.qty}</td><td style="text-align:right;">${fmt(i.price)}</td><td style="text-align:right;">${fmt(i.price*i.qty)}</td></tr>`;}).join('');
-  const total=o.items.reduce((s,i)=>s+i.price*i.qty,0);
-  const html=`<div class="invoice-preview"><div class="invoice-head"><div><div style="font-size:16px;font-weight:700;color:var(--navy)">LABABIL SOLUTION</div><div style="font-size:11px;color:var(--text2);">CCTV · Listrik · Network · Jasa Pemasangan · Jambi</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;">${o.id}</div><div style="font-size:11px;color:var(--text2);">${o.date}</div><div style="margin-top:4px;"><span class="status-badge ${statusStyle[o.status]||'s-pending'}">${o.status}</span></div></div></div><div style="margin-bottom:10px;font-size:12px;"><b>Kepada:</b> ${c?c.name:'?'} · ${c?c.phone:''}<br>${c?c.addr:''}</div><table class="invoice-table"><thead><tr><th>Produk/Jasa</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr></thead><tbody>${rows}</tbody></table><div class="invoice-total"><span>Total</span><span style="font-weight:700;color:var(--blue);">${fmt(total)}</span></div></div>`;
-  const m=document.createElement('div');m.className='modal-bg open';
-  m.innerHTML=`<div class="modal"><div class="modal-title">Detail Invoice <button class="close-btn" onclick="this.closest('.modal-bg').remove()">×</button></div>${html}<div style="margin-top:12px;text-align:center;"><button class="btn-primary" onclick="window.print()">🖨️ Cetak Invoice</button></div></div>`;
-  document.body.appendChild(m);
-}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-renderDashboard();
+
+  // Modal Functions
+  window.openModal = (id) => document.getElementById(id).classList.add('active');
+  window.closeModal = (id) => document.getElementById(id).classList.remove('active');
+
+  // Load Data Realtime
+  function loadData() {
+    onSnapshot(collection(db, 'produk'), snap => {
+      produkList = [];
+      const tbody = document.getElementById('table-produk');
+      tbody.innerHTML = '';
+      snap.forEach(docSnap => {
+        const p = { id: docSnap.id, ...docSnap.data() };
+        produkList.push(p);
+        tbody.innerHTML += `<tr class="hover:bg-gray-50">
+          <td class="p-4">${p.nama}</td><td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">${p.kategori}</span></td>
+          <td class="p-4">Rp ${p.harga.toLocaleString()}</td><td class="p-4">${p.stok}</td>
+          <td class="p-4"><button onclick="editStok('${p.id}', ${p.stok})" class="text-blue-600 hover:underline">Edit Stok</button></td>
+        </tr>`;
+      });
+      updateTransactionDropdowns();
+      updateDashboardStats();
+    });
+
+    onSnapshot(collection(db, 'pelanggan'), snap => {
+      pelangganList = [];
+      const tbody = document.getElementById('table-pelanggan');
+      tbody.innerHTML = '';
+      snap.forEach(docSnap => {
+        const c = { id: docSnap.id, ...docSnap.data() };
+        pelangganList.push(c);
+        tbody.innerHTML += `<tr class="hover:bg-gray-50">
+          <td class="p-4">${c.nama}</td><td class="p-4">${c.telepon}</td>
+          <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">${c.tipe}</span></td>
+          <td class="p-4 text-sm text-gray-500">${c.alamat}</td>
+        </tr>`;
+      });
+      updateTransactionDropdowns();
+      updateDashboardStats();
+    });
+
+    onSnapshot(collection(db, 'transaksi'), snap => {
+      const invTbody = document.getElementById('table-invoice');
+      const listUl = document.getElementById('list-transaksi');
+      const recentUl = document.getElementById('recent-transactions');
+      invTbody.innerHTML = ''; listUl.innerHTML = ''; recentUl.innerHTML = '';
+      
+      let totalMonth = 0, totalToday = 0, countToday = 0;
+      const today = new Date().toDateString();
+      const currentMonth = new Date().getMonth();
+
+      const sorted = [];
+      snap.forEach(d => sorted.push({id: d.id, ...d.data()}));
+      sorted.sort((a,b) => b.createdAt?.seconds - a.createdAt?.seconds);
+
+      sorted.forEach((t, i) => {
+        const date = t.createdAt ? new Date(t.createdAt.seconds * 1000) : new Date();
+        const statusColor = t.status === 'Selesai' ? 'text-green-600' : t.status === 'Pending' ? 'text-yellow-600' : 'text-blue-600';
+        
+        invTbody.innerHTML += `<tr><td class="p-4 font-mono">#INV-${t.id.slice(-6).toUpperCase()}</td><td class="p-4">${t.pelangganNama}</td>
+        <td class="p-4">${date.toLocaleDateString('id-ID')}</td><td class="p-4 font-bold">Rp ${t.total.toLocaleString()}</td>
+        <td class="p-4 ${statusColor}">${t.status}</td></tr>`;
+
+        listUl.innerHTML += `<li class="flex justify-between border-b pb-2"><span>${t.pelangganNama}</span><span class="font-bold">Rp ${t.total.toLocaleString()}</span></li>`;
+        if(i < 5) recentUl.innerHTML += `<li class="flex justify-between"><span class="truncate w-2/3">${t.pelangganNama} • ${t.items.length} item</span><span class="font-semibold">Rp ${t.total.toLocaleString()}</span></li>`;
+
+        if(t.status === 'Selesai') {
+          if(date.toDateString() === today) { totalToday += t.total; countToday++; }
+          if(date.getMonth() === currentMonth) totalMonth += t.total;
+        }
+      });
+
+      document.getElementById('stat-today-rp').textContent = `Rp ${totalToday.toLocaleString()}`;
+      document.getElementById('stat-today-count').textContent = countToday;
+      document.getElementById('stat-month-rp').textContent = `Rp ${totalMonth.toLocaleString()}`;
+    });
+  }
+
+  function updateDashboardStats() {
+    document.getElementById('stat-customers').textContent = pelangganList.length;
+    const low = produkList.filter(p => p.stok <= 5).length;
+    document.getElementById('stat-lowstock').textContent = low;
+  }
+
+  function updateTransactionDropdowns() {
+    const custSel = document.getElementById('trans-pelanggan');
+    const prodSel = document.getElementById('trans-item-prod');
+    custSel.innerHTML = '<option value="">Pilih Pelanggan</option>';
+    pelangganList.forEach(c => custSel.innerHTML += `<option value="${c.nama}">${c.nama}</option>`);
+    
+    prodSel.innerHTML = '<option value="">Pilih Produk</option>';
+    produkList.forEach(p => prodSel.innerHTML += `<option value="${p.id}" data-harga="${p.harga}" data-nama="${p.nama}">${p.nama} (Rp ${p.harga.toLocaleString()})</option>`);
+  }
+
+  // Transaction Logic
+  let cartTotal = 0;
+  document.getElementById('btn-add-item').addEventListener('click', () => {
+    const prodSel = document.getElementById('trans-item-prod');
+    const qty = parseInt(document.getElementById('trans-item-qty').value) || 0;
+    const opt = prodSel.options[prodSel.selectedIndex];
+    if(!prodSel.value || qty <= 0) return alert('Pilih produk & masukkan qty');
+
+    const harga = parseInt(opt.dataset.harga);
+    const nama = opt.dataset.nama;
+    cartItems.push({ produkId: prodSel.value, nama, qty, harga, sub: harga * qty });
+    cartTotal += harga * qty;
+    
+    renderCart();
+    document.getElementById('trans-item-qty').value = '';
+  });
+
+  function renderCart() {
+    const ul = document.getElementById('trans-items-list');
+    ul.innerHTML = '';
+    cartItems.forEach((item, idx) => {
+      ul.innerHTML += `<li class="flex justify-between"><span>${item.nama} x${item.qty}</span><span>Rp ${item.sub.toLocaleString()} <button class="text-red-500 ml-2" onclick="removeCartItem(${idx})">×</button></span></li>`;
+    });
+    document.getElementById('trans-total').textContent = `Rp ${cartTotal.toLocaleString()}`;
+  }
+  window.removeCartItem = (idx) => { cartTotal -= cartItems[idx].sub; cartItems.splice(idx, 1); renderCart(); };
+
+  // Forms Submit
+  document.getElementById('form-produk').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await addDoc(collection(db, 'produk'), {
+      nama: document.getElementById('prod-nama').value,
+      kategori: document.getElementById('prod-kategori').value,
+      harga: Number(document.getElementById('prod-harga').value),
+      stok: Number(document.getElementById('prod-stok').value),
+      deskripsi: document.getElementById('prod-desc').value,
+      createdAt: serverTimestamp()
+    });
+    closeModal('modal-produk'); e.target.reset();
+  });
+
+  document.getElementById('form-pelanggan').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await addDoc(collection(db, 'pelanggan'), {
+      nama: document.getElementById('cust-nama').value,
+      telepon: document.getElementById('cust-telp').value,
+      alamat: document.getElementById('cust-alamat').value,
+      tipe: document.getElementById('cust-tipe').value,
+      createdAt: serverTimestamp()
+    });
+    closeModal('modal-pelanggan'); e.target.reset();
+  });
+
+  document.getElementById('form-transaksi').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(cartItems.length === 0) return alert('Tambahkan produk ke transaksi');
+    const pelangganNama = document.getElementById('trans-pelanggan').value || 'Umum';
+    
+    await addDoc(collection(db, 'transaksi'), {
+      pelangganNama,
+      items: cartItems,
+      total: cartTotal,
+      status: document.getElementById('trans-status').value,
+      createdAt: serverTimestamp()
+    });
+    
+    // Kurangi stok otomatis
+    for(const item of cartItems) {
+      const prodRef = doc(db, 'produk', item.produkId);
+      const prod = produkList.find(p => p.id === item.produkId);
+      if(prod) await updateDoc(prodRef, { stok: prod.stok - item.qty });
+    }
+
+    cartItems = []; cartTotal = 0; renderCart();
+    closeModal('modal-transaksi'); e.target.reset();
+  });
+
+  window.editStok = async (id, current) => {
+    const newStok = prompt(`Masukkan stok baru:`, current);
+    if(newStok !== null) {
+      await updateDoc(doc(db, 'produk', id), { stok: Number(newStok) });
+    }
+  };
+
+  // Init
+  loadData();
 </script>
 </body>
 </html>
